@@ -80,14 +80,15 @@ def exec_async(cmd, done=None):
     thread.start()
     return thread
 
-def unixify(path):
+def unixify(path, stripext=True):
     path = path.replace('\\', '/')
-    ext3 = path[-3:]
-    if (ext3 == '.ts' or ext3 == '.js'):
-        return path[0:-3]
-    ext4 = path[-4:]
-    if (ext4 == '.tsx' or ext4 == '.jsx'):
-        return path[0:-4]
+    if stripext:
+        ext3 = path[-3:]
+        if (ext3 == '.ts' or ext3 == '.js'):
+            return path[0:-3]
+        ext4 = path[-4:]
+        if (ext4 == '.tsx' or ext4 == '.jsx'):
+            return path[0:-4]
     return path
 
 def get_panel_item(root, item):
@@ -321,7 +322,7 @@ def get_from_paths(item, file_name = None, typescript_paths = []):
     if not file_name:
         file_name = '.'
     from_path = os.path.relpath(item['filepath'], os.path.dirname(file_name))
-    from_path = unixify(from_path)
+    from_path = unixify(from_path, get_setting("import_strip_extension", True))
     if from_path[0] != '.':
         from_path = './' + from_path
     result = [from_path]
